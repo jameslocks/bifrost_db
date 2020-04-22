@@ -9,25 +9,25 @@ This was chosen so that the INI file could be kept in a secure location on the w
 
 The class can then be initalised with:
 
-$oBifrost = new BiFrost($aConfig);
+`$oBifrost = new BiFrost($aConfig);`
 
 If the connection fails, a FALSE flag is returned.
 
-Queries should be packaged into an array with two keys, QUERY and PARAMS, which should also be an array.  Example below:
+Queries should be packaged into an array with two keys, `QUERY` and `PARAMS`, which should also be an array.  Example below:
 
 `$aQuery['query'] = '
     SELECT
         *
     FROM
-        \`table\`
+        table
     WHERE
-        \`name\` = ?;
+        name = ?;
 $aQuery['params] = ['James'];`
 
 A single row can then be returned with:
 
-$aResult = $oBifrost->prepQuery($aQuery)->fetchRow();
+`$aResult = $oBifrost->prepQuery($aQuery)->fetchRow();`
 
-The result array will contain two main keys, STATUS and PAYLOAD.  If the query failed, STATUS will be FALSE and PAYLOAD will contain the error.  If the query was successful, STATUS will be TRUE and PAYLOAD will contain the result set.
+The result array will contain two main keys, `STATUS` and `PAYLOAD`.  If the query failed, `STATUS` will be `FALSE` and `PAYLOAD` will contain the error.  If the query was successful, `STATUS` will be `TRUE` and `PAYLOAD` will contain the result set.
 
-Multiple rows can be returned by calling the fetchRows() method.
+Multiple rows can be returned by calling the `fetchRows()` method.
