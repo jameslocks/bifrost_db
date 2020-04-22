@@ -15,14 +15,14 @@ If the connection fails, a FALSE flag is returned.
 
 Queries should be packaged into an array with two keys, QUERY and PARAMS, which should also be an array.  Example below:
 
-$aQuery['query'] = '
+`$aQuery['query'] = '
     SELECT
         *
     FROM
-        `table`
+        \`table\`
     WHERE
-        `name` = ?;
-$aQuery['params] = ['James'];
+        \`name\` = ?;
+$aQuery['params] = ['James'];`
 
 A single row can then be returned with:
 
