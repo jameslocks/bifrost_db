@@ -31,3 +31,6 @@ A single row can then be returned with:
 The result array will contain two main keys, `STATUS` and `PAYLOAD`.  If the query failed, `STATUS` will be `FALSE` and `PAYLOAD` will contain the error.  If the query was successful, `STATUS` will be `TRUE` and `PAYLOAD` will contain the result set.
 
 Multiple rows can be returned by calling the `fetchRows()` method.
+
+Inspiraton largly taken from: https://codeshack.io/super-fast-php-mysql-database-class/
+Thank you.
