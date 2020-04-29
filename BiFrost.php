@@ -19,7 +19,7 @@ class BiFrost
         if($aInfo = parse_ini_file($this->aConfig['incs']['config'].'bifrost.ini')) {
             $this->oBifrost = new mysqli($aInfo['host'],$aInfo['username'],$aInfo['password'],$aInfo['dbname'],$aInfo['port']);
             if ($this->oBifrost->connect_error) {
-                $this->storeError(FALSE,'Failed to connect to MySQL - ' . $this->oBifrost->connect_error);
+                $this->storeError(FALSE,'Failed to connect to MySQL - '.$this->oBifrost->connect_error);
             }
             $this->oBifrost->set_charset($aInfo['charset']);
         } else {
@@ -38,12 +38,12 @@ class BiFrost
                 }
                 $this->oQuery->bind_param($sTypes,...$aParams);
                 if ($this->oQuery->errno) {
-                    $this->storeError(FALSE,'Unable to process MySQL query (check your params) - ' . $this->oQuery->error);
+                    $this->storeError(FALSE,'Unable to process MySQL query (check your params) - '.$this->oQuery->error);
                 }
             }
             $this->oQuery->execute();
         } else {
-            $this->storeError(FALSE,'Unable to prepare MySQL statement (check your syntax) - ' . $this->oBifrost->error);
+            $this->storeError(FALSE,'Unable to prepare MySQL statement (check your syntax) - '.$this->oBifrost->error);
         }
         return $this;
     }
@@ -64,12 +64,14 @@ class BiFrost
                 }
             }
             if(empty($aResult)) {
-                $this->aPackage['status'] = false;
+                $this->aPackage['status'] = true;
                 $this->aPackage['payload'] = 'No matching records found';
+                $this->aPackage['rowcount'] = $this->getNumRows();
                 return $this->aPackage;
             }
             $this->aPackage['status'] = true;
             $this->aPackage['payload'] = $aResult;
+            $this->aPackage['rowcount'] = $this->getNumRows();
             return $this->aPackage;
         } else {
             return $this->getError();
@@ -94,12 +96,14 @@ class BiFrost
                 $iCount = $iCount+1;
             }
             if(empty($aResult)) {
-                $this->aPackage['status'] = false;
+                $this->aPackage['status'] = true;
                 $this->aPackage['payload'] = 'No matching records found';
+                $this->aPackage['rowcount'] = $this->getNumRows();
                 return $this->aPackage;
             }
             $this->aPackage['status'] = true;
             $this->aPackage['payload'] = $aResult;
+            $this->aPackage['rowcount'] = $this->getNumRows();
             return $this->aPackage;
         } else {
             return $this->getError();
@@ -107,11 +111,19 @@ class BiFrost
     }
 
     public function getNumRows() {
-        return $this->oQuery->num_rows;
+        if(empty($this->aError)) {
+            return $this->oQuery->num_rows;
+        } else {
+            return $this->getError();
+        }
     }
 
     public function getAffectedRows() {
-        return $this->oQuery->affected_rows;
+        if(empty($this->aError)) {
+            return $this->oQuery->affected_rows;
+        } else {
+            return $this->getError();
+        }
     }
 
     public function getLastInsert() {
@@ -127,13 +139,15 @@ class BiFrost
     }
 
     protected function storeError($bError,$sError) {
-        $this->aError = [$bError,$sError];
+        $this->aError = [
+            "status"    => $bError,
+            "payload"   => $sError];
     }
 
 	private function getType($var) {
 	    if (is_string($var)) return 's'; // String
 	    if (is_float($var)) return 'd'; // Double
-	    if (is_int($var)) return 'i'; // Int
+        if (is_int($var)) return 'i'; // Int
 	    return 'b'; // Blob
 	}
 
